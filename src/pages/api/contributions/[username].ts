@@ -6,7 +6,7 @@ const USERNAME_PATTERN = /^[a-z\d](?:[a-z\d-]{0,37}[a-z\d])?$/i;
 const JSON_HEADERS = { 'Content-Type': 'application/json' };
 const BROWSER_CACHE_SECONDS = 300;
 const SHARED_CACHE_SECONDS = 3600;
-const CONTACT_URL = import.meta.env.SITE ?? 'https://github.com';
+const CONTACT_URL = import.meta.env.SITE ?? 'https://github.com/RogalaPiotr/github-dev-days-mona-mayhem';
 const USER_AGENT = `mona-mayhem/0.0.1 (+${CONTACT_URL})`;
 
 export const GET: APIRoute = async ({ params }) => {
@@ -37,7 +37,17 @@ export const GET: APIRoute = async ({ params }) => {
 			});
 		}
 
-		const data: unknown = await response.json();
+		let data: unknown;
+		try {
+			data = await response.json();
+		} catch (error) {
+			console.error('Invalid JSON from GitHub contributions endpoint:', error);
+
+			return new Response(JSON.stringify({ error: 'Invalid response from GitHub API' }), {
+				status: 502,
+				headers: JSON_HEADERS,
+			});
+		}
 
 		return new Response(JSON.stringify(data), {
 			status: 200,

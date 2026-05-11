@@ -6,7 +6,8 @@ const USERNAME_PATTERN = /^[a-z\d](?:[a-z\d-]{0,37}[a-z\d])?$/i;
 const JSON_HEADERS = { 'Content-Type': 'application/json' };
 const BROWSER_CACHE_SECONDS = 300;
 const SHARED_CACHE_SECONDS = 3600;
-const USER_AGENT = 'mona-mayhem/0.0.1 (+https://github.com)';
+const CONTACT_URL = import.meta.env.SITE ?? 'https://github.com';
+const USER_AGENT = `mona-mayhem/0.0.1 (+${CONTACT_URL})`;
 
 export const GET: APIRoute = async ({ params }) => {
 	const username = params.username?.trim();
@@ -45,7 +46,9 @@ export const GET: APIRoute = async ({ params }) => {
 				'Cache-Control': `public, s-maxage=${SHARED_CACHE_SECONDS}, max-age=${BROWSER_CACHE_SECONDS}`,
 			},
 		});
-	} catch {
+	} catch (error) {
+		console.error('Error fetching GitHub contributions:', error);
+
 		return new Response(JSON.stringify({ error: 'Unexpected error fetching contribution data' }), {
 			status: 500,
 			headers: JSON_HEADERS,

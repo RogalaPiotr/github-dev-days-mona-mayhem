@@ -20,6 +20,7 @@ interface ContributionResponse {
 
 type StatusType = 'default' | 'error' | 'loading';
 
+const USERNAME_REGEX = /^[a-z\d](?:[a-z\d-]{0,37}[a-z\d])?$/i;
 const fallbackColors = ['#ebedf0', '#9be9a8', '#40c463', '#30a14e', '#216e39'];
 const player1Input = document.querySelector<HTMLInputElement>('#player1');
 const player2Input = document.querySelector<HTMLInputElement>('#player2');
@@ -34,6 +35,23 @@ const setStatus = (message: string, type: StatusType = 'default') => {
 
 	statusMessage.textContent = message;
 	statusMessage.className = type === 'default' ? 'status' : `status ${type}`;
+};
+
+const shakeElement = (el: HTMLElement) => {
+	el.classList.remove('shake');
+	void el.offsetWidth; // force reflow to restart animation
+	el.classList.add('shake');
+	el.addEventListener('animationend', () => el.classList.remove('shake'), { once: true });
+};
+
+const setInputError = (input: HTMLInputElement, hasError: boolean) => {
+	if (hasError) {
+		input.classList.add('error');
+		input.setAttribute('aria-invalid', 'true');
+	} else {
+		input.classList.remove('error');
+		input.removeAttribute('aria-invalid');
+	}
 };
 
 const renderPlayerCard = (username: string, data: ContributionResponse) => {
@@ -160,11 +178,59 @@ const handleBattleSubmit = async () => {
 	const player2 = player2Input.value.trim();
 	results.innerHTML = '';
 
-	if (!player1 || !player2) {
-		setStatus('Please enter usernames for both players.', 'error');
+	// Per-field validation with specific error messages
+	const p1Empty = !player1;
+	const p2Empty = !player2;
+
+	if (p1Empty && p2Empty) {
+		setInputError(player1Input, true);
+		setInputError(player2Input, true);
+		shakeElement(player1Input);
+		shakeElement(player2Input);
+		setStatus('Enter both player usernames to battle!', 'error');
+		if (statusMessage) shakeElement(statusMessage);
+		player1Input.focus();
 		return;
 	}
 
+	if (p1Empty) {
+		setInputError(player1Input, true);
+		shakeElement(player1Input);
+		setStatus('Enter a username for Player 1.', 'error');
+		if (statusMessage) shakeElement(statusMessage);
+		player1Input.focus();
+		return;
+	}
+
+	if (p2Empty) {
+		setInputError(player2Input, true);
+		shakeElement(player2Input);
+		setStatus('Enter a username for Player 2.', 'error');
+		if (statusMessage) shakeElement(statusMessage);
+		player2Input.focus();
+		return;
+	}
+
+	if (!USERNAME_REGEX.test(player1)) {
+		setInputError(player1Input, true);
+		shakeElement(player1Input);
+		setStatus(`"${player1}" is not a valid GitHub username.`, 'error');
+		if (statusMessage) shakeElement(statusMessage);
+		player1Input.focus();
+		return;
+	}
+
+	if (!USERNAME_REGEX.test(player2)) {
+		setInputError(player2Input, true);
+		shakeElement(player2Input);
+		setStatus(`"${player2}" is not a valid GitHub username.`, 'error');
+		if (statusMessage) shakeElement(statusMessage);
+		player2Input.focus();
+		return;
+	}
+
+	setInputError(player1Input, false);
+	setInputError(player2Input, false);
 	setStatus('Loading contribution data...', 'loading');
 	battleButton.disabled = true;
 
@@ -185,6 +251,7 @@ const handleBattleSubmit = async () => {
 		setStatus('Battle ready!');
 	} catch (error) {
 		setStatus(error instanceof Error ? error.message : 'Unexpected battle error.', 'error');
+		if (statusMessage) shakeElement(statusMessage);
 	} finally {
 		battleButton.disabled = false;
 	}
@@ -202,3 +269,5 @@ const handleInputKeydown = (event: KeyboardEvent) => {
 battleButton?.addEventListener('click', handleBattleSubmit);
 player1Input?.addEventListener('keydown', handleInputKeydown);
 player2Input?.addEventListener('keydown', handleInputKeydown);
+player1Input?.addEventListener('input', () => { if (player1Input) setInputError(player1Input, false); });
+player2Input?.addEventListener('input', () => { if (player2Input) setInputError(player2Input, false); });

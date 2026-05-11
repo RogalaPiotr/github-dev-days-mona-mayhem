@@ -2,19 +2,33 @@
 
 # 🎮 Mona Mayhem
 
-**VS Code & GitHub Copilot CLI Workshop** — Build a GitHub Contribution Battle Arena
+> **VS Code & GitHub Copilot CLI Workshop**  
+> Build a retro GitHub Contribution Battle Arena with Astro, Copilot, and a little arcade chaos.
 
-A workshop template for building a retro arcade-themed website with Astro that compares GitHub contribution graphs of two users. This is the **starting point** — you'll build the app step by step using GitHub Copilot.
+[🚀 Start the workshop](workshop/00-overview.md) · [🌐 Open the docs site](https://copilot-dev-days.github.io/mona-mayhem/) · [🧱 Explore the starter app](src/pages/index.astro)
+
+Mona Mayhem is the starter project for a hands-on GitHub Copilot workshop. You begin with a lightweight Astro app and turn it into a head-to-head contribution showdown between two GitHub users using planning, agentic edits, design iteration, and polish passes.
 
 ![Mona Mayhem Screenshot](https://github.com/user-attachments/assets/5eca79e2-cb9f-4e93-aa0d-23666ebde3b7)
 *What you'll build by the end of the workshop*
 
+## ✨ Why this repo is fun to explore
+
+- **Start fast** with a minimal Astro codebase instead of a blank project
+- **Practice real Copilot workflows** across both VS Code and the GitHub Copilot CLI
+- **Ship something visual** with retro arcade styling, contribution data, and playful matchups
+- **Learn by layering** from setup and planning to implementation, theming, and final polish
+
+## 🕹️ Pick your player
+
+The workshop supports two tracks, so you can follow the workflow that feels most natural:
+
+| Track | Best for | You'll practice |
+|------|----------|-----------------|
+| **VS Code** | Developers who want an editor-first experience | Chat, Plan Mode, Agent Mode, background agents, and editor-native review loops |
+| **CLI** | Developers who prefer building from the terminal | `copilot`, `@file` context, `/plan`, autonomous edits, `/fleet`, `/delegate`, and `/review` |
+
 ## 📚 Workshop
-
-The workshop supports two tracks — follow the one that matches your preferred workflow:
-
-- **VS Code track** — Chat, Plan Mode, Agent Mode, background agents, and editor-native review loops
-- **CLI track** — `copilot`, `@file` context, `/plan`, autonomous edits, `/fleet`, `/delegate`, and `/review`
 
 | Part | Title | Copilot Focus |
 |------|-------|---------------|
@@ -28,13 +42,14 @@ The workshop supports two tracks — follow the one that matches your preferred 
 
 ## 🚀 Quick Start
 
-1. **Create your own repo first** by either:
-   - clicking **Use this template** to create a new repo, or
+1. **Create your own repo** by either:
+   - clicking **Use this template**, or
    - forking this repository.
-2. Choose your workshop path:
+2. **Choose your workshop path**:
    - **VS Code:** clone your repo and open it in VS Code.
    - **GitHub Copilot CLI:** clone your repo locally, install `copilot`, and work from your terminal.
-3. Follow the [workshop guide](workshop/00-overview.md)
+3. **Start with the guide:** [workshop/00-overview.md](workshop/00-overview.md)
+4. **Build as you go** through each chapter until your battle arena is complete.
 
 ## Prerequisites
 
@@ -61,6 +76,14 @@ The workshop supports two tracks — follow the one that matches your preferred 
 - **Runtime**: Node.js with [@astrojs/node](https://docs.astro.build/en/guides/integrations-guide/node/) adapter
 - **Font**: Press Start 2P (retro gaming font)
 - **API**: GitHub's contribution graph API
+
+## 🏁 End result
+
+By the time you finish, you'll have:
+
+- a GitHub contribution face-off experience built with Astro
+- a stronger feel for Copilot planning and implementation workflows
+- a polished project you can keep extending after the workshop
 
 ## License
 

@@ -241,12 +241,12 @@ return card;
 };
 
 const isErrorResponse = (value: unknown): value is { error: string } => {
-	return (
-		typeof value === 'object' &&
-		value !== null &&
-		'error' in value &&
-		typeof (value as { error: unknown }).error === 'string'
-	);
+	if (typeof value !== 'object' || value === null) {
+		return false;
+	}
+
+	const obj = value as Record<string, unknown>;
+	return typeof obj.error === 'string';
 };
 
 const isContributionResponse = (value: unknown): value is ContributionResponse => {
@@ -280,7 +280,7 @@ const isContributionResponse = (value: unknown): value is ContributionResponse =
 	);
 };
 
-const fetchContributions = async (username: string) => {
+const fetchContributions = async (username: string): Promise<ContributionResponse> => {
 const response = await fetch(`/api/contributions/${encodeURIComponent(username)}`);
 const data: unknown = await response.json();
 
@@ -288,11 +288,11 @@ if (!response.ok) {
 	throw new Error(isErrorResponse(data) ? data.error : 'Failed to fetch contribution data');
 }
 
-if (isErrorResponse(data)) {
-	throw new Error(data.error);
-}
-
 if (!isContributionResponse(data)) {
+	if (isErrorResponse(data)) {
+		throw new Error(data.error);
+	}
+
 	throw new Error('Invalid contribution response');
 }
 

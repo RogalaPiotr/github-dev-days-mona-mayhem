@@ -1,10 +1,12 @@
 interface ContributionDay {
 	count: number;
-	date: string;
+	date?: string;
+	weekday?: number;
 	level: number;
 }
 
 interface ContributionWeek {
+	first_day?: string;
 	contribution_days: ContributionDay[];
 }
 
@@ -61,8 +63,13 @@ const renderPlayerCard = (username: string, data: ContributionResponse) => {
 			const square = document.createElement('div');
 			square.className = 'day-square';
 			const colorIndex = Math.max(0, Math.min(day.level, colors.length - 1));
+			const dayDate = getDayDate(day, week);
+			const tooltip = `${dayDate}: ${day.count} contributions`;
 			square.style.backgroundColor = colors[colorIndex] ?? colors[0];
-			square.title = `${day.date}: ${day.count} contributions`;
+			square.title = tooltip;
+			square.dataset.tooltip = tooltip;
+			square.setAttribute('aria-label', tooltip);
+			square.tabIndex = 0;
 			grid.append(square);
 		}
 	}
@@ -83,7 +90,8 @@ const isContributionDay = (day: unknown): day is ContributionDay => {
 	return (
 		isObjectRecord(day) &&
 		typeof day.count === 'number' &&
-		typeof day.date === 'string' &&
+		(day.date === undefined || typeof day.date === 'string') &&
+		(day.weekday === undefined || typeof day.weekday === 'number') &&
 		typeof day.level === 'number'
 	);
 };
@@ -91,9 +99,26 @@ const isContributionDay = (day: unknown): day is ContributionDay => {
 const isContributionWeek = (week: unknown): week is ContributionWeek => {
 	return (
 		isObjectRecord(week) &&
+		(week.first_day === undefined || typeof week.first_day === 'string') &&
 		Array.isArray(week.contribution_days) &&
 		week.contribution_days.every(isContributionDay)
 	);
+};
+
+const getDayDate = (day: ContributionDay, week: ContributionWeek): string => {
+	if (typeof day.date === 'string') {
+		return day.date;
+	}
+
+	if (typeof week.first_day === 'string' && typeof day.weekday === 'number') {
+		const baseDate = new Date(`${week.first_day}T00:00:00Z`);
+		if (!Number.isNaN(baseDate.getTime())) {
+			baseDate.setUTCDate(baseDate.getUTCDate() + day.weekday);
+			return baseDate.toISOString().slice(0, 10);
+		}
+	}
+
+	return 'Unknown date';
 };
 
 const isContributionResponse = (value: unknown): value is ContributionResponse => {

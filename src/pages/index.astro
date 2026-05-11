@@ -81,6 +81,7 @@ color: #cf222e;
 
 .status.loading {
 color: #0969da;
+animation: status-pulse 1.1s ease-in-out infinite;
 }
 
 .results {
@@ -120,7 +121,48 @@ padding-bottom: 0.25rem;
 .day-square {
 width: 12px;
 height: 12px;
+min-width: 12px;
+min-height: 12px;
+position: relative;
 border-radius: 2px;
+cursor: default;
+}
+
+.day-square::after {
+content: attr(data-tooltip);
+position: absolute;
+left: 50%;
+bottom: calc(100% + 8px);
+transform: translateX(-50%);
+padding: 0.4rem 0.5rem;
+border-radius: 0.35rem;
+background: #24292f;
+color: #fff;
+font-size: 0.75rem;
+line-height: 1.2;
+white-space: nowrap;
+opacity: 0;
+visibility: hidden;
+transition: opacity 120ms ease;
+pointer-events: none;
+z-index: 2;
+}
+
+.day-square:hover::after,
+.day-square:focus-visible::after {
+opacity: 1;
+visibility: visible;
+}
+
+@keyframes status-pulse {
+0%,
+100% {
+opacity: 1;
+}
+
+50% {
+opacity: 0.45;
+}
 }
 
 .vs-badge {

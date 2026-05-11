@@ -6,7 +6,7 @@ const USERNAME_PATTERN = /^[a-z\d](?:[a-z\d-]{0,37}[a-z\d])?$/i;
 const JSON_HEADERS = { 'Content-Type': 'application/json' };
 const BROWSER_CACHE_SECONDS = 300;
 const SHARED_CACHE_SECONDS = 3600;
-const USER_AGENT = 'mona-mayhem/0.0.1 (+https://github.com/RogalaPiotr/github-dev-days-mona-mayhem)';
+const USER_AGENT = 'mona-mayhem/0.0.1 (+https://github.com)';
 
 export const GET: APIRoute = async ({ params }) => {
 	const username = params.username?.trim();

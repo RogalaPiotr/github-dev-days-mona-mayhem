@@ -165,7 +165,7 @@ Player 2
 
 <p id="statusMessage" class="status" aria-live="polite"></p>
 
-<section id="results" class="results"></section>
+<section id="results" class="results" aria-live="polite"></section>
 </main>
 
 <script lang="ts">
@@ -224,12 +224,13 @@ card.append(range);
 const grid = document.createElement('div');
 grid.className = 'contribution-grid';
 
-const colors = data.colors_full?.length ? data.colors_full : fallbackColors;
+const colors = data.colors_full && data.colors_full.length > 0 ? data.colors_full : fallbackColors;
 for (const week of data.weeks ?? []) {
 for (const day of week.contribution_days ?? []) {
 const square = document.createElement('div');
 square.className = 'day-square';
-square.style.backgroundColor = colors[day.level] ?? colors[0];
+const colorIndex = Math.max(0, Math.min(day.level, colors.length - 1));
+square.style.backgroundColor = colors[colorIndex] ?? colors[0];
 square.title = `${day.date}: ${day.count} contributions`;
 grid.append(square);
 }
@@ -249,13 +250,33 @@ const isErrorResponse = (value: unknown): value is { error: string } => {
 };
 
 const isContributionResponse = (value: unknown): value is ContributionResponse => {
+	const isContributionDay = (day: unknown): day is ContributionDay => {
+		return (
+			typeof day === 'object' &&
+			day !== null &&
+			typeof (day as { count?: unknown }).count === 'number' &&
+			typeof (day as { date?: unknown }).date === 'string' &&
+			typeof (day as { level?: unknown }).level === 'number'
+		);
+	};
+
+	const isContributionWeek = (week: unknown): week is ContributionWeek => {
+		return (
+			typeof week === 'object' &&
+			week !== null &&
+			Array.isArray((week as { contribution_days?: unknown }).contribution_days) &&
+			(week as { contribution_days: unknown[] }).contribution_days.every(isContributionDay)
+		);
+	};
+
 	return (
 		typeof value === 'object' &&
 		value !== null &&
 		typeof (value as { from?: unknown }).from === 'string' &&
 		typeof (value as { to?: unknown }).to === 'string' &&
 		typeof (value as { total_contributions?: unknown }).total_contributions === 'number' &&
-		Array.isArray((value as { weeks?: unknown }).weeks)
+		Array.isArray((value as { weeks?: unknown }).weeks) &&
+		(value as { weeks: unknown[] }).weeks.every(isContributionWeek)
 	);
 };
 

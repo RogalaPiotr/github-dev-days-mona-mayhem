@@ -250,7 +250,7 @@ throw new Error('error' in data ? data.error : 'Failed to fetch contribution dat
 return data;
 };
 
-const runBattle = async () => {
+const handleBattleSubmit = async () => {
 if (!player1Input || !player2Input || !battleButton || !results) {
 return;
 }
@@ -289,17 +289,17 @@ battleButton.disabled = false;
 }
 };
 
-battleButton?.addEventListener('click', runBattle);
+battleButton?.addEventListener('click', handleBattleSubmit);
 player1Input?.addEventListener('keydown', (event) => {
 if (event.key === 'Enter') {
 event.preventDefault();
-void runBattle();
+void handleBattleSubmit();
 }
 });
 player2Input?.addEventListener('keydown', (event) => {
 if (event.key === 'Enter') {
 event.preventDefault();
-void runBattle();
+void handleBattleSubmit();
 }
 });
 </script>

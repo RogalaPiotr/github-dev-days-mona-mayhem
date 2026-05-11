@@ -27,6 +27,7 @@ const player2Input = document.querySelector<HTMLInputElement>('#player2');
 const battleButton = document.querySelector<HTMLButtonElement>('#battleButton');
 const statusMessage = document.querySelector<HTMLElement>('#statusMessage');
 const results = document.querySelector<HTMLElement>('#results');
+const winnerBanner = document.querySelector<HTMLElement>('#winnerBanner');
 
 const setStatus = (message: string, type: StatusType = 'default') => {
 	if (!statusMessage) {
@@ -52,6 +53,31 @@ const setInputError = (input: HTMLInputElement, hasError: boolean) => {
 		input.classList.remove('error');
 		input.removeAttribute('aria-invalid');
 	}
+};
+
+const renderWinnerBanner = (
+	player1: string,
+	player2: string,
+	player1Data: ContributionResponse,
+	player2Data: ContributionResponse,
+) => {
+	if (!winnerBanner) return;
+
+	winnerBanner.innerHTML = '';
+	const banner = document.createElement('div');
+
+	if (player1Data.total_contributions > player2Data.total_contributions) {
+		banner.className = 'winner-banner winner';
+		banner.textContent = `🏆 ${player1} WINS! 🏆`;
+	} else if (player2Data.total_contributions > player1Data.total_contributions) {
+		banner.className = 'winner-banner winner';
+		banner.textContent = `🏆 ${player2} WINS! 🏆`;
+	} else {
+		banner.className = 'winner-banner tie';
+		banner.textContent = `🤝 IT'S A TIE! 🤝`;
+	}
+
+	winnerBanner.append(banner);
 };
 
 const renderPlayerCard = (username: string, data: ContributionResponse) => {
@@ -177,6 +203,7 @@ const handleBattleSubmit = async () => {
 	const player1 = player1Input.value.trim();
 	const player2 = player2Input.value.trim();
 	results.innerHTML = '';
+	if (winnerBanner) winnerBanner.innerHTML = '';
 
 	// Per-field validation with specific error messages
 	const p1Empty = !player1;
@@ -248,6 +275,7 @@ const handleBattleSubmit = async () => {
 		results.append(vs);
 
 		results.append(renderPlayerCard(player2, player2Data));
+		renderWinnerBanner(player1, player2, player1Data, player2Data);
 		setStatus('Battle ready!');
 	} catch (error) {
 		setStatus(error instanceof Error ? error.message : 'Unexpected battle error.', 'error');

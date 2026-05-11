@@ -511,6 +511,100 @@ button[disabled] {
 	}
 }
 
+#winnerBanner {
+	margin-top: 1.5rem;
+}
+
+.winner-banner {
+	text-align: center;
+	padding: 1.25rem 1.5rem;
+	border-radius: 1rem;
+	font-size: clamp(0.7rem, 2vw, 0.95rem);
+	letter-spacing: 0.12em;
+	line-height: 1.6;
+	position: relative;
+	overflow: hidden;
+}
+
+.winner-banner::before {
+	content: '';
+	position: absolute;
+	inset: -60% -35%;
+	background: linear-gradient(120deg, transparent 35%, rgba(255, 255, 255, 0.22) 50%, transparent 65%);
+	transform: translateX(-120%) rotate(12deg);
+	animation: banner-sheen 2.4s ease-in-out infinite 0.7s;
+	pointer-events: none;
+}
+
+.winner-banner.winner {
+	background: linear-gradient(135deg, rgba(255, 215, 0, 0.12), rgba(255, 140, 0, 0.08), rgba(138, 43, 226, 0.1));
+	border: 1px solid rgba(255, 215, 0, 0.45);
+	color: #ffd700;
+	text-shadow: 0 0 10px rgba(255, 215, 0, 0.75), 0 0 22px rgba(255, 165, 0, 0.45), 0 0 40px rgba(255, 215, 0, 0.2);
+	animation: banner-entrance 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) both, winner-pulse 2s ease-in-out infinite;
+}
+
+.winner-banner.tie {
+	background: linear-gradient(135deg, rgba(95, 239, 131, 0.1), rgba(138, 43, 226, 0.1));
+	border: 1px solid rgba(95, 239, 131, 0.3);
+	color: var(--text);
+	text-shadow: 0 0 8px rgba(95, 239, 131, 0.4), 0 0 20px rgba(138, 43, 226, 0.3);
+	animation: banner-entrance 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) both, tie-pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes banner-entrance {
+	0% {
+		opacity: 0;
+		transform: scale(0.85) translateY(24px);
+	}
+
+	70% {
+		transform: scale(1.03) translateY(-3px);
+	}
+
+	100% {
+		opacity: 1;
+		transform: scale(1) translateY(0);
+	}
+}
+
+@keyframes banner-sheen {
+	0%,
+	60% {
+		transform: translateX(-120%) rotate(12deg);
+	}
+
+	100% {
+		transform: translateX(140%) rotate(12deg);
+	}
+}
+
+@keyframes winner-pulse {
+	0%,
+	100% {
+		box-shadow: 0 0 24px rgba(255, 215, 0, 0.2), 0 0 50px rgba(255, 165, 0, 0.1);
+		text-shadow: 0 0 10px rgba(255, 215, 0, 0.75), 0 0 22px rgba(255, 165, 0, 0.45), 0 0 40px rgba(255, 215, 0, 0.2);
+	}
+
+	50% {
+		box-shadow: 0 0 40px rgba(255, 215, 0, 0.45), 0 0 80px rgba(255, 165, 0, 0.2), 0 0 100px rgba(138, 43, 226, 0.15);
+		text-shadow: 0 0 16px rgba(255, 215, 0, 1), 0 0 34px rgba(255, 165, 0, 0.7), 0 0 60px rgba(255, 215, 0, 0.4);
+	}
+}
+
+@keyframes tie-pulse {
+	0%,
+	100% {
+		box-shadow: 0 0 20px rgba(95, 239, 131, 0.2), 0 0 40px rgba(138, 43, 226, 0.1);
+		border-color: rgba(95, 239, 131, 0.3);
+	}
+
+	50% {
+		box-shadow: 0 0 36px rgba(95, 239, 131, 0.4), 0 0 60px rgba(138, 43, 226, 0.25);
+		border-color: rgba(138, 43, 226, 0.5);
+	}
+}
+
 @media (max-width: 860px) {
 	.results {
 		grid-template-columns: 1fr;
@@ -536,7 +630,8 @@ button[disabled] {
 	}
 
 	.player-card::before,
-	button::before {
+	button::before,
+	.winner-banner::before {
 		display: none;
 	}
 }
@@ -562,6 +657,8 @@ Player 2
 <p id="statusMessage" class="status" aria-live="polite"></p>
 
 <section id="results" class="results" aria-live="polite"></section>
+
+<div id="winnerBanner" aria-live="polite"></div>
 </main>
 
 <script src="../scripts/battle.ts"></script>

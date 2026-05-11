@@ -28,8 +28,13 @@ export const GET: APIRoute = async ({ params }) => {
 		});
 
 		if (!response.ok) {
+			console.error(`GitHub contributions request failed for ${username} with status ${response.status}`);
+
 			const status = response.status === 404 ? 404 : 502;
-			const error = response.status === 404 ? 'GitHub user not found' : 'Failed to fetch contribution data';
+			const error =
+				response.status === 404
+					? 'GitHub user not found'
+					: `Failed to fetch contribution data (status ${response.status})`;
 
 			return new Response(JSON.stringify({ error }), {
 				status,
